@@ -5,16 +5,8 @@ using JobTracker.API.Services;
 
 namespace JobTracker.Tests;
 
-public class JobApplicationServiceTests
+public class JobApplicationServiceTests : TestBase
 {
-    private AppDbContext CreateInMemoryContext()
-    {
-        var options = new DbContextOptionsBuilder<AppDbContext>()
-            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-            .Options;
-
-        return new AppDbContext(options);
-    }
 
     [Fact]
     public void GetAll_WhenEmpty_ReturnsEmptyList()
@@ -51,4 +43,5 @@ public class JobApplicationServiceTests
         Assert.Equal(1, context.JobApplications.Count());
         Assert.Equal("Google", context.JobApplications.First().CompanyName);
     }
+
 }
