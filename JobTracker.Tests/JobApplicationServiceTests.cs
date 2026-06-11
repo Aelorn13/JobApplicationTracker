@@ -2,7 +2,7 @@
 using JobTracker.Infrastructure.Data;
 using JobTracker.Application.Interfaces;
 using JobTracker.Infrastructure.Services;
-using JobTracker.Domain.Entities;  
+using JobTracker.Domain.Entities;
 using JobTracker.Domain.Enums;
 
 namespace JobTracker.Tests;
@@ -20,7 +20,8 @@ public class JobApplicationServiceTests : TestBase
         var result = service.GetAll();
 
         // Assert
-        Assert.Empty(result);
+        Assert.Empty(result.Items);
+        Assert.Equal(0, result.TotalCount);
     }
 
     [Fact]
@@ -91,7 +92,8 @@ public class JobApplicationServiceTests : TestBase
         var result = service.GetAll();
 
         // Assert
-        Assert.Equal(2, result.Count);
+        Assert.Equal(2, result.Items.Count);
+        Assert.Equal(2, result.TotalCount);
     }
 
     [Fact]
@@ -141,7 +143,7 @@ public class JobApplicationServiceTests : TestBase
         context.JobApplications.Add(originalApp);
         context.SaveChanges();
         context.ChangeTracker.Clear();
-        
+
         var service = new JobApplicationService(context);
         var updatedDto = new UpdateJobApplicationDto
         {
@@ -181,7 +183,7 @@ public class JobApplicationServiceTests : TestBase
 
         // Assert
         Assert.Null(exception);
-        Assert.Empty(context.JobApplications); 
+        Assert.Empty(context.JobApplications);
     }
 
     [Fact]
@@ -199,8 +201,8 @@ public class JobApplicationServiceTests : TestBase
         var result = service.GetAll(status: ApplicationStatus.Pending);
 
         // Assert
-        Assert.Equal(2, result.Count);
-        Assert.All(result, app => Assert.Equal(ApplicationStatus.Pending, app.Status));
+        Assert.Equal(2, result.Items.Count);
+        Assert.All(result.Items, app => Assert.Equal(ApplicationStatus.Pending, app.Status));
     }
 
     [Fact]
@@ -219,7 +221,33 @@ public class JobApplicationServiceTests : TestBase
         var result = service.GetAll(from: targetDate.AddDays(-2), to: targetDate.AddDays(2));
 
         // Assert
-        Assert.Single(result);
-        Assert.Equal("Google", result.First().CompanyName);
+        Assert.Single(result.Items);
+        Assert.Equal("Google", result.Items.First().CompanyName);
+    }
+    [Fact]
+    public void GetAll_WithPagination_ReturnsCorrectPage()
+    {
+        // Arrange
+        var context = CreateInMemoryContext();
+        for (int i = 1; i <= 15; i++)
+        {
+            context.JobApplications.Add(new JobApplication
+            {
+                CompanyName = $"Company {i}",
+                Position = "Dev",
+                Status = ApplicationStatus.Pending,
+                AppliedDate = DateTime.Now
+            });
+        }
+        context.SaveChanges();
+        var service = new JobApplicationService(context);
+
+        // Act
+        var result = service.GetAll(page: 2, pageSize: 5);
+
+        // Assert
+        Assert.Equal(15, result.TotalCount);
+        Assert.Equal(5, result.Items.Count);
+        Assert.Equal("Company 6", result.Items.First().CompanyName);
     }
 }
