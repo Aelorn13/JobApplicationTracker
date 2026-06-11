@@ -1,6 +1,7 @@
-using JobTracker.API.Models;
-using JobTracker.API.Data;
-namespace JobTracker.API.Services;
+using JobTracker.Domain.Entities;
+using JobTracker.Infrastructure.Data;
+using JobTracker.Application.Interfaces;
+namespace JobTracker.Infrastructure.Services;
 
 public class JobApplicationService : IJobApplicationService
 {

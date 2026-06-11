@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using JobTracker.API.Models;
-using JobTracker.API.Services;
+using JobTracker.Domain.Entities;
+using JobTracker.Application.Interfaces;
+using JobTracker.Application.DTOs;
+
 
 namespace JobTracker.API.Controllers;
 
@@ -16,25 +18,63 @@ public class JobApplicationsController : ControllerBase
     }
 
     [HttpGet]
-    public IEnumerable<JobApplication> GetAll()
+    public ActionResult<IEnumerable<JobApplicationResponseDto>> GetAll()
     {
-        return _service.GetAll();
+        var applications = _service.GetAll();
+
+        var dtos = applications.Select(app => new JobApplicationResponseDto
+        {
+            Id = app.Id,
+            CompanyName = app.CompanyName,
+            Position = app.Position,
+            Status = app.Status,
+            AppliedDate = app.AppliedDate
+        }).ToList();
+
+        return Ok(dtos);
     }
 
     [HttpGet("{id}")]
-    public IActionResult GetById(int id)
+    public ActionResult<JobApplicationResponseDto> GetById(int id)
     {
         var application = _service.GetById(id);
         if (application == null)
             return NotFound();
-        return Ok(application);
+
+        var dto = new JobApplicationResponseDto
+        {
+            Id = application.Id,
+            CompanyName = application.CompanyName,
+            Position = application.Position,
+            Status = application.Status,
+            AppliedDate = application.AppliedDate
+        };
+
+        return Ok(dto);
     }
 
     [HttpPost]
-    public IActionResult Add([FromBody] JobApplication application)
+    public IActionResult Add([FromBody] CreateJobApplicationDto dto)
     {
+        var application = new JobApplication
+        {
+            CompanyName = dto.CompanyName,
+            Position = dto.Position,
+            Status = dto.Status,
+            AppliedDate = dto.AppliedDate
+        };
         _service.Add(application);
-        return CreatedAtAction(nameof(GetById), new { id = application.Id }, application);
+
+        var responseDto = new JobApplicationResponseDto
+        {
+            Id = application.Id,
+            CompanyName = application.CompanyName,
+            Position = application.Position,
+            Status = application.Status,
+            AppliedDate = application.AppliedDate
+        };
+
+        return CreatedAtAction(nameof(GetById), new { id = application.Id }, responseDto);
     }
 
     [HttpDelete("{id}")]
@@ -47,7 +87,7 @@ public class JobApplicationsController : ControllerBase
         }
         return NoContent();
     }
-    
+
     [HttpPut("{id}")]
     public IActionResult Put(int id, [FromBody] JobApplication updatedApplication)
     {

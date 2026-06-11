@@ -1,7 +1,8 @@
-using JobTracker.API.Services;
+using JobTracker.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
-using JobTracker.API.Data;
+using JobTracker.Infrastructure.Data;
 using Scalar.AspNetCore;
+using JobTracker.Application.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDbContext>(options =>

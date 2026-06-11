@@ -1,7 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using JobTracker.API.Data;
-using JobTracker.API.Models;
-using JobTracker.API.Services;
+using JobTracker.Infrastructure.Data;
+using JobTracker.Application.Interfaces;
+using JobTracker.Infrastructure.Services;
+using JobTracker.Domain.Entities;  
 
 namespace JobTracker.Tests;
 

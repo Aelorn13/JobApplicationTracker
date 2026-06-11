@@ -20,4 +20,10 @@
     <PackageReference Include="Scalar.AspNetCore" Version="2.14.14" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\JobTracker.Domain\JobTracker.Domain.csproj" />
+    <ProjectReference Include="..\JobTracker.Application\JobTracker.Application.csproj" />
+    <ProjectReference Include="..\JobTracker.Infrastructure\JobTracker.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>

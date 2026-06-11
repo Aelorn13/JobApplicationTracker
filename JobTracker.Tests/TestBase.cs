@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using JobTracker.API.Data;
+using JobTracker.Infrastructure.Data;
 
 namespace JobTracker.Tests;
 
