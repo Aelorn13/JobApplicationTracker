@@ -89,18 +89,14 @@ public class JobApplicationsController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public IActionResult Put(int id, [FromBody] JobApplication updatedApplication)
+    public IActionResult Put(int id, [FromBody] UpdateJobApplicationDto updatedApplication)
     {
-        if (id != updatedApplication.Id)
-        {
-            return BadRequest("The ID in the route and the ID in the request body do not match.");
-        }
         var existingApplication = _service.GetById(id);
         if (existingApplication == null)
         {
             return NotFound();
         }
-        _service.Update(updatedApplication);
+        _service.Update(id, updatedApplication);
         return NoContent();
     }
 }
