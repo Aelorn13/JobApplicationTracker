@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using JobTracker.Domain.Entities;
 using JobTracker.Application.Interfaces;
 using JobTracker.Application.DTOs;
-
+using JobTracker.Domain.Enums;
 
 namespace JobTracker.API.Controllers;
 
@@ -18,20 +18,15 @@ public class JobApplicationsController : ControllerBase
     }
 
     [HttpGet]
-    public ActionResult<IEnumerable<JobApplicationResponseDto>> GetAll()
+    public ActionResult<PaginatedResultDto<JobApplicationResponseDto>> GetAll(
+        [FromQuery] ApplicationStatus? status,
+        [FromQuery] DateTime? from,
+        [FromQuery] DateTime? to,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 10)
     {
-        var applications = _service.GetAll();
-
-        var dtos = applications.Select(app => new JobApplicationResponseDto
-        {
-            Id = app.Id,
-            CompanyName = app.CompanyName,
-            Position = app.Position,
-            Status = app.Status,
-            AppliedDate = app.AppliedDate
-        }).ToList();
-
-        return Ok(dtos);
+        var result = _service.GetAll(status, from, to, page, pageSize);
+        return Ok(result);
     }
 
     [HttpGet("{id}")]

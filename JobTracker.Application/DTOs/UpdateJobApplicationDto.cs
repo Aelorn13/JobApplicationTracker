@@ -1,12 +1,18 @@
+using System.ComponentModel.DataAnnotations;
 using JobTracker.Domain.Enums;
 
-namespace JobTracker.Application.DTOs;
-
-public class JobApplicationResponseDto
+public class UpdateJobApplicationDto
 {
-    public int Id { get; set; }
+    [Required]
+    [MaxLength(100)]
     public required string CompanyName { get; set; }
+
+    [Required]
+    [MaxLength(100)]
     public required string Position { get; set; }
+
+    [Required]
     public ApplicationStatus Status  { get; set; }
+
     public DateTime AppliedDate { get; set; }
 }
