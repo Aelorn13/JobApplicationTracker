@@ -92,6 +92,7 @@ export default function ApplicationsPage() {
       companyName: app.companyName,
       position: app.position,
       status: app.status,
+      appliedDate: app.appliedDate,
     });
   };
 
@@ -105,7 +106,10 @@ export default function ApplicationsPage() {
     setError("");
 
     try {
-      await api.put(`/JobApplications/${editingId}`, editFormData);
+      await api.put(`/JobApplications/${editingId}`, {
+        ...editFormData,
+        appliedDate: editFormData.appliedDate || new Date().toISOString(),
+      });
 
       if (filterStatus && filterStatus !== editFormData.status) {
         setApplications((prev) => prev.filter((app) => app.id !== editingId));
