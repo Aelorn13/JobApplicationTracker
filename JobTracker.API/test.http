@@ -21,6 +21,6 @@ Content-Type: application/json
 ### Без токена — должен вернуть 401
 GET http://localhost:5141/api/JobApplications
 
-### С токеном — вставь токен из ответа логина
+###
 GET http://localhost:5141/api/JobApplications
-Authorization: Bearer <вставь токен сюда>
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjIwZjk3NTdhLTMxMWYtNDY2Yy1iMmVjLTJkNzc4N2M3MjBiZSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6ImpvaG5AZXhhbXBsZS5jb20iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiSm9obiBEb2UiLCJleHAiOjE3ODE4NzM5MTgsImlzcyI6IkpvYlRyYWNrZXJBUEkiLCJhdWQiOiJKb2JUcmFja2VyQ2xpZW50In0.g_C9SuNLt325kwXjqubd0q8X1N6lxf4-jB7pLffHQCk
