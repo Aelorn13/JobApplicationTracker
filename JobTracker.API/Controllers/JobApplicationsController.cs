@@ -3,9 +3,11 @@ using JobTracker.Domain.Entities;
 using JobTracker.Application.Interfaces;
 using JobTracker.Application.DTOs;
 using JobTracker.Domain.Enums;
+using Microsoft.AspNetCore.Authorization;
 
 namespace JobTracker.API.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class JobApplicationsController : ControllerBase
