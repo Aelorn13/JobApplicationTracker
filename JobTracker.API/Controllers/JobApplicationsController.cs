@@ -1,9 +1,10 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using JobTracker.Domain.Entities;
 using JobTracker.Application.Interfaces;
 using JobTracker.Application.DTOs;
 using JobTracker.Domain.Enums;
-using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace JobTracker.API.Controllers;
 
@@ -19,35 +20,41 @@ public class JobApplicationsController : ControllerBase
         _service = service;
     }
 
+    private string GetUserId()
+    {
+        return User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+    }
+
+    private JobApplicationResponseDto MapToDto(JobApplication app)
+    {
+        return new JobApplicationResponseDto
+        {
+            Id = app.Id,
+            CompanyName = app.CompanyName,
+            Position = app.Position,
+            Status = app.Status,
+            AppliedDate = app.AppliedDate
+        };
+    }
+
     [HttpGet]
-    public ActionResult<PaginatedResultDto<JobApplicationResponseDto>> GetAll(
+    public IActionResult GetAll(
         [FromQuery] ApplicationStatus? status,
         [FromQuery] DateTime? from,
         [FromQuery] DateTime? to,
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 10)
     {
-        var result = _service.GetAll(status, from, to, page, pageSize);
+        var result = _service.GetAll(GetUserId(), status, from, to, page, pageSize);
         return Ok(result);
     }
 
     [HttpGet("{id}")]
-    public ActionResult<JobApplicationResponseDto> GetById(int id)
+    public IActionResult GetById(int id)
     {
-        var application = _service.GetById(id);
-        if (application == null)
-            return NotFound();
-
-        var dto = new JobApplicationResponseDto
-        {
-            Id = application.Id,
-            CompanyName = application.CompanyName,
-            Position = application.Position,
-            Status = application.Status,
-            AppliedDate = application.AppliedDate
-        };
-
-        return Ok(dto);
+        var application = _service.GetById(id, GetUserId());
+        if (application == null) return NotFound();
+        return Ok(MapToDto(application));
     }
 
     [HttpPost]
@@ -58,42 +65,28 @@ public class JobApplicationsController : ControllerBase
             CompanyName = dto.CompanyName,
             Position = dto.Position,
             Status = dto.Status,
-            AppliedDate = dto.AppliedDate
+            AppliedDate = dto.AppliedDate,
+            UserId = GetUserId()
         };
         _service.Add(application);
-
-        var responseDto = new JobApplicationResponseDto
-        {
-            Id = application.Id,
-            CompanyName = application.CompanyName,
-            Position = application.Position,
-            Status = application.Status,
-            AppliedDate = application.AppliedDate
-        };
-
-        return CreatedAtAction(nameof(GetById), new { id = application.Id }, responseDto);
-    }
-
-    [HttpDelete("{id}")]
-    public IActionResult Delete(int id)
-    {
-        bool isDeleted = _service.Delete(id);
-        if (!isDeleted)
-        {
-            return NotFound();
-        }
-        return NoContent();
+        return CreatedAtAction(nameof(GetById), new { id = application.Id }, MapToDto(application));
     }
 
     [HttpPut("{id}")]
     public IActionResult Put(int id, [FromBody] UpdateJobApplicationDto updatedApplication)
     {
-        var existingApplication = _service.GetById(id);
-        if (existingApplication == null)
-        {
-            return NotFound();
-        }
-        _service.Update(id, updatedApplication);
+        var userId = GetUserId();
+        var existingApplication = _service.GetById(id, userId);
+        if (existingApplication == null) return NotFound();
+        _service.Update(id, updatedApplication, userId);
+        return NoContent();
+    }
+
+    [HttpDelete("{id}")]
+    public IActionResult Delete(int id)
+    {
+        var isDeleted = _service.Delete(id, GetUserId());
+        if (!isDeleted) return NotFound();
         return NoContent();
     }
 }
