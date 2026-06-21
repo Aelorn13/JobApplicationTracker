@@ -33,7 +33,13 @@ public class JobApplicationsController : ControllerBase
             CompanyName = app.CompanyName,
             Position = app.Position,
             Status = app.Status,
-            AppliedDate = app.AppliedDate
+            AppliedDate = app.AppliedDate,
+            RawDescription = app.RawDescription,
+            SalaryMin = app.SalaryMin,
+            SalaryMax = app.SalaryMax,
+            Location = app.Location,
+            ExpirationDate = app.ExpirationDate,
+            Tags = app.Tags.Select(t => t.Name).ToList()
         };
     }
 
@@ -66,9 +72,14 @@ public class JobApplicationsController : ControllerBase
             Position = dto.Position,
             Status = dto.Status,
             AppliedDate = dto.AppliedDate,
-            UserId = GetUserId()
+            UserId = GetUserId(),
+            RawDescription = dto.RawDescription,
+            SalaryMin = dto.SalaryMin,
+            SalaryMax = dto.SalaryMax,
+            Location = dto.Location,
+            ExpirationDate = dto.ExpirationDate
         };
-        _service.Add(application);
+        _service.Add(application, dto.Tags); 
         return CreatedAtAction(nameof(GetById), new { id = application.Id }, MapToDto(application));
     }
 

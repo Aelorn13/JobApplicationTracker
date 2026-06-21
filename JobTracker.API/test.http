@@ -1,26 +1,32 @@
-### Регистрация
-POST http://localhost:5141/api/auth/register
+### Добавить с тегами и новыми полями
+POST http://localhost:5141/api/JobApplications
+Authorization: Bearer <твой токен>
 Content-Type: application/json
 
 {
-    "firstName": "John",
-    "lastName": "Doe",
-    "email": "john@example.com",
-    "password": "Password123!"
+    "companyName": "Noir",
+    "position": ".NET Developer",
+    "status": "Pending",
+    "appliedDate": "2026-06-19T00:00:00",
+    "salaryMin": 75000,
+    "salaryMax": 95000,
+    "location": "London, Remote",
+    "tags": [".NET", "Azure", "C#"]
 }
 
-### Логин
-POST http://localhost:5141/api/auth/login
+### Проверить что теги сохранились
+GET http://localhost:5141/api/JobApplications
+Authorization: Bearer <твой токен>
+
+### Добавить вторую заявку с одним общим тегом
+POST http://localhost:5141/api/JobApplications
+Authorization: Bearer <твой токен>
 Content-Type: application/json
 
 {
-    "email": "john@example.com",
-    "password": "Password123!"
+    "companyName": "Google",
+    "position": "Backend Developer",
+    "status": "Pending",
+    "appliedDate": "2026-06-19T00:00:00",
+    "tags": [".NET", "GCP"]
 }
-
-### Без токена — должен вернуть 401
-GET http://localhost:5141/api/JobApplications
-
-###
-GET http://localhost:5141/api/JobApplications
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjIwZjk3NTdhLTMxMWYtNDY2Yy1iMmVjLTJkNzc4N2M3MjBiZSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6ImpvaG5AZXhhbXBsZS5jb20iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiSm9obiBEb2UiLCJleHAiOjE3ODE4NzM5MTgsImlzcyI6IkpvYlRyYWNrZXJBUEkiLCJhdWQiOiJKb2JUcmFja2VyQ2xpZW50In0.g_C9SuNLt325kwXjqubd0q8X1N6lxf4-jB7pLffHQCk

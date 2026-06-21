@@ -17,7 +17,7 @@ public class JobApplicationServiceTests : TestBase
         var service = new JobApplicationService(context);
 
         // Act
-        var result = service.GetAll();
+        var result = service.GetAll("test-user-id");
 
         // Assert
         Assert.Empty(result.Items);
@@ -35,11 +35,12 @@ public class JobApplicationServiceTests : TestBase
             CompanyName = "Google",
             Position = "Developer",
             Status = ApplicationStatus.Pending,
-            AppliedDate = DateTime.Now
+            AppliedDate = DateTime.Now,
+            UserId = "test-user-id"
         };
 
         // Act
-        service.Add(application);
+        service.Add(application, null);
 
         // Assert
         Assert.Equal(1, context.JobApplications.Count());
@@ -51,13 +52,13 @@ public class JobApplicationServiceTests : TestBase
     {
         // Arrange
         var context = CreateInMemoryContext();
-        var application = new JobApplication { CompanyName = "Microsoft", Position = "QA", Status = ApplicationStatus.Pending };
+        var application = new JobApplication { CompanyName = "Microsoft", Position = "QA", Status = ApplicationStatus.Pending, UserId = "test-user-id" };
         context.JobApplications.Add(application);
         context.SaveChanges();
         var service = new JobApplicationService(context);
 
         // Act
-        var result = service.GetById(application.Id);
+        var result = service.GetById(application.Id, "test-user-id");
 
         // Assert
         Assert.NotNull(result);
@@ -72,7 +73,7 @@ public class JobApplicationServiceTests : TestBase
         var service = new JobApplicationService(context);
 
         // Act
-        var result = service.GetById(999);
+        var result = service.GetById(999, "test-user-id");
 
         // Assert
         Assert.Null(result);
@@ -83,13 +84,13 @@ public class JobApplicationServiceTests : TestBase
     {
         // Arrange
         var context = CreateInMemoryContext();
-        context.JobApplications.Add(new JobApplication { CompanyName = "Apple", Position = "Dev", Status = ApplicationStatus.Pending, AppliedDate = DateTime.Now });
-        context.JobApplications.Add(new JobApplication { CompanyName = "Amazon", Position = "QA", Status = ApplicationStatus.Interview, AppliedDate = DateTime.Now });
+        context.JobApplications.Add(new JobApplication { CompanyName = "Apple", Position = "Dev", Status = ApplicationStatus.Pending, AppliedDate = DateTime.Now, UserId = "test-user-id" });
+        context.JobApplications.Add(new JobApplication { CompanyName = "Amazon", Position = "QA", Status = ApplicationStatus.Interview, AppliedDate = DateTime.Now, UserId = "test-user-id" });
         context.SaveChanges();
         var service = new JobApplicationService(context);
 
         // Act
-        var result = service.GetAll();
+        var result = service.GetAll("test-user-id");
 
         // Assert
         Assert.Equal(2, result.Items.Count);
@@ -101,13 +102,13 @@ public class JobApplicationServiceTests : TestBase
     {
         // Arrange
         var context = CreateInMemoryContext();
-        var application = new JobApplication { CompanyName = "Netflix", Position = "Data Scientist", Status = ApplicationStatus.Pending, AppliedDate = DateTime.Now };
+        var application = new JobApplication { CompanyName = "Netflix", Position = "Data Scientist", Status = ApplicationStatus.Pending, AppliedDate = DateTime.Now, UserId = "test-user-id" };
         context.JobApplications.Add(application);
         context.SaveChanges();
         var service = new JobApplicationService(context);
 
         // Act
-        var result = service.Delete(application.Id);
+        var result = service.Delete(application.Id, "test-user-id");
 
         // Assert
         Assert.True(result);
@@ -122,7 +123,7 @@ public class JobApplicationServiceTests : TestBase
         var service = new JobApplicationService(context);
 
         // Act
-        var result = service.Delete(999);
+        var result = service.Delete(999, "test-user-id");
 
         // Assert
         Assert.False(result);
@@ -138,7 +139,8 @@ public class JobApplicationServiceTests : TestBase
             CompanyName = "Old Company",
             Position = "Intern",
             Status = ApplicationStatus.Pending,
-            AppliedDate = DateTime.Now.AddDays(-2)
+            AppliedDate = DateTime.Now.AddDays(-2),
+            UserId = "test-user-id"
         };
         context.JobApplications.Add(originalApp);
         context.SaveChanges();
@@ -154,7 +156,7 @@ public class JobApplicationServiceTests : TestBase
         };
 
         // Act 
-        service.Update(originalApp.Id, updatedDto);
+        service.Update(originalApp.Id, updatedDto, "test-user-id");
 
         // Assert 
         var appInDb = context.JobApplications.Find(originalApp.Id);
@@ -179,7 +181,7 @@ public class JobApplicationServiceTests : TestBase
         };
 
         // Act
-        var exception = Record.Exception(() => service.Update(999, nonExistingDto));
+        var exception = Record.Exception(() => service.Update(999, nonExistingDto, "test-user-id"));
 
         // Assert
         Assert.Null(exception);
@@ -191,14 +193,14 @@ public class JobApplicationServiceTests : TestBase
     {
         // Arrange
         var context = CreateInMemoryContext();
-        context.JobApplications.Add(new JobApplication { CompanyName = "Apple", Position = "Dev", Status = ApplicationStatus.Pending, AppliedDate = DateTime.Now });
-        context.JobApplications.Add(new JobApplication { CompanyName = "Google", Position = "QA", Status = ApplicationStatus.Interview, AppliedDate = DateTime.Now });
-        context.JobApplications.Add(new JobApplication { CompanyName = "Amazon", Position = "PM", Status = ApplicationStatus.Pending, AppliedDate = DateTime.Now });
+        context.JobApplications.Add(new JobApplication { CompanyName = "Apple", Position = "Dev", Status = ApplicationStatus.Pending, AppliedDate = DateTime.Now, UserId = "test-user-id" });
+        context.JobApplications.Add(new JobApplication { CompanyName = "Google", Position = "QA", Status = ApplicationStatus.Interview, AppliedDate = DateTime.Now, UserId = "test-user-id" });
+        context.JobApplications.Add(new JobApplication { CompanyName = "Amazon", Position = "PM", Status = ApplicationStatus.Pending, AppliedDate = DateTime.Now, UserId = "test-user-id" });
         context.SaveChanges();
         var service = new JobApplicationService(context);
 
         // Act
-        var result = service.GetAll(status: ApplicationStatus.Pending);
+        var result = service.GetAll("test-user-id", status: ApplicationStatus.Pending);
 
         // Assert
         Assert.Equal(2, result.Items.Count);
@@ -211,14 +213,14 @@ public class JobApplicationServiceTests : TestBase
         // Arrange
         var context = CreateInMemoryContext();
         var targetDate = new DateTime(2024, 1, 15);
-        context.JobApplications.Add(new JobApplication { CompanyName = "Apple", Position = "Dev", Status = ApplicationStatus.Pending, AppliedDate = targetDate.AddDays(-10) });
-        context.JobApplications.Add(new JobApplication { CompanyName = "Google", Position = "QA", Status = ApplicationStatus.Interview, AppliedDate = targetDate });
-        context.JobApplications.Add(new JobApplication { CompanyName = "Amazon", Position = "PM", Status = ApplicationStatus.Pending, AppliedDate = targetDate.AddDays(10) });
+        context.JobApplications.Add(new JobApplication { CompanyName = "Apple", Position = "Dev", Status = ApplicationStatus.Pending, AppliedDate = targetDate.AddDays(-10), UserId = "test-user-id" });
+        context.JobApplications.Add(new JobApplication { CompanyName = "Google", Position = "QA", Status = ApplicationStatus.Interview, AppliedDate = targetDate, UserId = "test-user-id" });
+        context.JobApplications.Add(new JobApplication { CompanyName = "Amazon", Position = "PM", Status = ApplicationStatus.Pending, AppliedDate = targetDate.AddDays(10), UserId = "test-user-id" });
         context.SaveChanges();
         var service = new JobApplicationService(context);
 
         // Act
-        var result = service.GetAll(from: targetDate.AddDays(-2), to: targetDate.AddDays(2));
+        var result = service.GetAll("test-user-id", from: targetDate.AddDays(-2), to: targetDate.AddDays(2));
 
         // Assert
         Assert.Single(result.Items);
@@ -236,18 +238,61 @@ public class JobApplicationServiceTests : TestBase
                 CompanyName = $"Company {i}",
                 Position = "Dev",
                 Status = ApplicationStatus.Pending,
-                AppliedDate = DateTime.Now
+                AppliedDate = DateTime.Now,
+                UserId = "test-user-id"
             });
         }
         context.SaveChanges();
         var service = new JobApplicationService(context);
 
         // Act
-        var result = service.GetAll(page: 2, pageSize: 5);
+        var result = service.GetAll("test-user-id", page: 2, pageSize: 5);
 
         // Assert
         Assert.Equal(15, result.TotalCount);
         Assert.Equal(5, result.Items.Count);
         Assert.Equal("Company 6", result.Items.First().CompanyName);
+    }
+    [Fact]
+    public void GetAll_ReturnsOnlyCurrentUserApplications()
+    {
+        var context = CreateInMemoryContext();
+        context.JobApplications.Add(new JobApplication
+        {
+            CompanyName = "Google",
+            Position = "Dev",
+            Status = ApplicationStatus.Pending,
+            AppliedDate = DateTime.Now,
+            UserId = "user-1"
+        });
+        context.JobApplications.Add(new JobApplication
+        {
+            CompanyName = "Amazon",
+            Position = "QA",
+            Status = ApplicationStatus.Pending,
+            AppliedDate = DateTime.Now,
+            UserId = "user-2"
+        });
+        context.SaveChanges();
+
+        var service = new JobApplicationService(context);
+        var result = service.GetAll("user-1");
+
+        Assert.Single(result.Items);
+        Assert.Equal("Google", result.Items[0].CompanyName);
+    }
+    [Fact]
+    public void Add_WithExistingTag_ReusesTagInsteadOfDuplicating()
+    {
+        var context = CreateInMemoryContext();
+        var service = new JobApplicationService(context);
+
+        var app1 = new JobApplication { CompanyName = "A", Position = "Dev", Status = ApplicationStatus.Pending, UserId = "u1" };
+        service.Add(app1, new List<string> { "React", ".NET" });
+
+        var app2 = new JobApplication { CompanyName = "B", Position = "Dev", Status = ApplicationStatus.Pending, UserId = "u1" };
+        service.Add(app2, new List<string> { "React", "Azure" });
+
+        Assert.Equal(3, context.Tags.Count()); 
     }
 }
