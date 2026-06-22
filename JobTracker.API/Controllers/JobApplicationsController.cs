@@ -15,11 +15,27 @@ public class JobApplicationsController : ControllerBase
 {
     private readonly IJobApplicationService _service;
 
-    public JobApplicationsController(IJobApplicationService service)
+    private readonly IAiParsingService _aiParsingService;
+
+    public JobApplicationsController(IJobApplicationService service, IAiParsingService aiParsingService)
     {
         _service = service;
+        _aiParsingService = aiParsingService;
     }
 
+    [HttpPost("parse")]
+    public async Task<IActionResult> ParseJobDescription([FromBody] ParseJobDescriptionDto dto)
+    {
+        try
+        {
+            var result = await _aiParsingService.ParseJobDescription(dto.JobText);
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(502, new { message = "Failed to parse job description", details = ex.Message });
+        }
+    }
     private string GetUserId()
     {
         return User.FindFirstValue(ClaimTypes.NameIdentifier)!;
@@ -79,7 +95,7 @@ public class JobApplicationsController : ControllerBase
             Location = dto.Location,
             ExpirationDate = dto.ExpirationDate
         };
-        _service.Add(application, dto.Tags); 
+        _service.Add(application, dto.Tags);
         return CreatedAtAction(nameof(GetById), new { id = application.Id }, MapToDto(application));
     }
 
@@ -100,4 +116,5 @@ public class JobApplicationsController : ControllerBase
         if (!isDeleted) return NotFound();
         return NoContent();
     }
+
 }

@@ -1,6 +1,26 @@
+### Регистрация
+POST http://localhost:5141/api/auth/register
+Content-Type: application/json
+
+{
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "john@example.com",
+    "password": "Password123!"
+}
+
+### Логин
+POST http://localhost:5141/api/auth/login
+Content-Type: application/json
+
+{
+    "email": "john@example.com",
+    "password": "Password123!"
+}
+
 ### Добавить с тегами и новыми полями
 POST http://localhost:5141/api/JobApplications
-Authorization: Bearer <твой токен>
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjM2NWEyMTA5LTU3YzYtNGEwZC05MDQ2LTFjN2MyZDgxMjNjZSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6ImpvaG5AZXhhbXBsZS5jb20iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiSm9obiBEb2UiLCJleHAiOjE3ODIwNzY5MDEsImlzcyI6IkpvYlRyYWNrZXJBUEkiLCJhdWQiOiJKb2JUcmFja2VyQ2xpZW50In0.hL18eEdbQYgKafoZbBHoS9m8KMihErnfpAxPA_MemeU
 Content-Type: application/json
 
 {
@@ -14,19 +34,11 @@ Content-Type: application/json
     "tags": [".NET", "Azure", "C#"]
 }
 
-### Проверить что теги сохранились
-GET http://localhost:5141/api/JobApplications
-Authorization: Bearer <твой токен>
-
-### Добавить вторую заявку с одним общим тегом
-POST http://localhost:5141/api/JobApplications
+### Парсинг вакансии
+POST http://localhost:5141/api/JobApplications/parse
 Authorization: Bearer <твой токен>
 Content-Type: application/json
 
 {
-    "companyName": "Google",
-    "position": "Backend Developer",
-    "status": "Pending",
-    "appliedDate": "2026-06-19T00:00:00",
-    "tags": [".NET", "GCP"]
+    "jobText": "About the job\n\n.NET Developer - Global Sports Company – London\n\n(Tech stack: .NET Developer, .NET 10.0, ASP.NET Core, C# 14, .NET Aspire, CI/CD, Azure DevOps, EF Core 10.0)\n\nOur client is a global sports brand... Salary: £75,000 - £95,000 + Bonus + Pension + Benefits\n\nLocation: London, UK / Remote Working"
 }
