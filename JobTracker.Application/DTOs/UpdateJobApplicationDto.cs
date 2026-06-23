@@ -21,4 +21,5 @@ public class UpdateJobApplicationDto
     public decimal? SalaryMax { get; set; }
     public string? Location { get; set; }
     public DateTime? ExpirationDate { get; set; }
+    public List<string>? Tags { get; set; } 
 }

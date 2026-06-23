@@ -105,13 +105,32 @@ public class JobApplicationService : IJobApplicationService
     public void Update(int id, UpdateJobApplicationDto dto, string userId)
     {
         var existingApp = _context.JobApplications
+            .Include(a => a.Tags)
             .FirstOrDefault(a => a.Id == id && a.UserId == userId);
+
         if (existingApp != null)
         {
             existingApp.CompanyName = dto.CompanyName;
             existingApp.Position = dto.Position;
             existingApp.Status = dto.Status;
             existingApp.AppliedDate = dto.AppliedDate;
+
+            existingApp.RawDescription = dto.RawDescription;
+            existingApp.SalaryMin = dto.SalaryMin;
+            existingApp.SalaryMax = dto.SalaryMax;
+            existingApp.Location = dto.Location;
+            existingApp.ExpirationDate = dto.ExpirationDate;
+
+            existingApp.Tags.Clear();
+
+            if (dto.Tags != null && dto.Tags.Any())
+            {
+                foreach (var tag in ResolveTags(dto.Tags))
+                {
+                    existingApp.Tags.Add(tag);
+                }
+            }
+
             _context.SaveChanges();
         }
     }

@@ -1,15 +1,4 @@
-### Регистрация
-POST http://localhost:5141/api/auth/register
-Content-Type: application/json
-
-{
-    "firstName": "John",
-    "lastName": "Doe",
-    "email": "john@example.com",
-    "password": "Password123!"
-}
-
-### Логин
+### 1. Логин (получить токен)
 POST http://localhost:5141/api/auth/login
 Content-Type: application/json
 
@@ -18,27 +7,88 @@ Content-Type: application/json
     "password": "Password123!"
 }
 
-### Добавить с тегами и новыми полями
+### 2. Создать заявку с тегами
 POST http://localhost:5141/api/JobApplications
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjM2NWEyMTA5LTU3YzYtNGEwZC05MDQ2LTFjN2MyZDgxMjNjZSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6ImpvaG5AZXhhbXBsZS5jb20iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiSm9obiBEb2UiLCJleHAiOjE3ODIwNzY5MDEsImlzcyI6IkpvYlRyYWNrZXJBUEkiLCJhdWQiOiJKb2JUcmFja2VyQ2xpZW50In0.hL18eEdbQYgKafoZbBHoS9m8KMihErnfpAxPA_MemeU
+Authorization: Bearer <токен>
 Content-Type: application/json
 
 {
-    "companyName": "Noir",
+    "companyName": "Google",
+    "position": "Backend Developer",
+    "status": "Pending",
+    "appliedDate": "2026-06-22T00:00:00",
+    "location": "London, Remote",
+    "salaryMin": 80000,
+    "salaryMax": 100000,
+    "tags": [".NET", "Azure"]
+}
+
+### 3. Получить все заявки — проверить что теги сохранились
+GET http://localhost:5141/api/JobApplications
+Authorization: Bearer <токен>
+
+### 4. Получить заявку по id — запомни id из шага 3
+GET http://localhost:5141/api/JobApplications/1
+Authorization: Bearer <токен>
+
+### 5. Обновить — заменить теги, добавить зарплату
+PUT http://localhost:5141/api/JobApplications/1
+Authorization: Bearer <токен>
+Content-Type: application/json
+
+{
+    "companyName": "Google",
+    "position": "Senior Backend Developer",
+    "status": "Interview",
+    "appliedDate": "2026-06-22T00:00:00",
+    "location": "London, Hybrid",
+    "salaryMin": 90000,
+    "salaryMax": 120000,
+    "expirationDate": "2026-07-30T00:00:00",
+    "tags": ["React"]
+}
+
+### 6. Проверить что теги заменились а не задублировались
+GET http://localhost:5141/api/JobApplications/1
+Authorization: Bearer <токен>
+
+### 7. Парсинг вакансии
+POST http://localhost:5141/api/JobApplications/parse
+Authorization: Bearer <токен>
+Content-Type: application/json
+
+{
+    "jobText": ".NET Developer - Global Sports Company - London\n\nTech stack: .NET 9, ASP.NET Core, C#, Azure DevOps, EF Core, SQL Server\n\nOur client is a global sports brand. They are looking for a .NET Developer.\n\nSalary: £75,000 - £95,000\n\nLocation: London, UK / Remote Working"
+}
+
+### 8. Создать заявку через парсинг вручную с данными из шага 7
+POST http://localhost:5141/api/JobApplications
+Authorization: Bearer <токен>
+Content-Type: application/json
+
+{
+    "companyName": "Global Sports Company",
     "position": ".NET Developer",
     "status": "Pending",
-    "appliedDate": "2026-06-19T00:00:00",
+    "appliedDate": "2026-06-22T00:00:00",
+    "location": "London, UK / Remote Working",
     "salaryMin": 75000,
     "salaryMax": 95000,
-    "location": "London, Remote",
-    "tags": [".NET", "Azure", "C#"]
+    "tags": [".NET 9", "ASP.NET Core", "C#", "Azure DevOps", "EF Core", "SQL Server"]
 }
 
-### Парсинг вакансии
-POST http://localhost:5141/api/JobApplications/parse
-Authorization: Bearer <твой токен>
-Content-Type: application/json
+### 9. Удалить заявку
+DELETE http://localhost:5141/api/JobApplications/1
+Authorization: Bearer <токен>
 
-{
-    "jobText": "About the job\n\n.NET Developer - Global Sports Company – London\n\n(Tech stack: .NET Developer, .NET 10.0, ASP.NET Core, C# 14, .NET Aspire, CI/CD, Azure DevOps, EF Core 10.0)\n\nOur client is a global sports brand... Salary: £75,000 - £95,000 + Bonus + Pension + Benefits\n\nLocation: London, UK / Remote Working"
-}
+### 10. Убедиться что удалилась
+GET http://localhost:5141/api/JobApplications
+Authorization: Bearer <токен>
+
+### 11. Фильтр по статусу
+GET http://localhost:5141/api/JobApplications?status=Interview
+Authorization: Bearer <токен>
+
+### 12. Пагинация
+GET http://localhost:5141/api/JobApplications?page=1&pageSize=2
+Authorization: Bearer <токен>
