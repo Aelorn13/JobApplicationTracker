@@ -15,4 +15,5 @@ public class JobApplicationResponseDto
     public string? Location { get; set; }
     public DateTime? ExpirationDate { get; set; }
     public List<string> Tags { get; set; } = new();
+    public string? Notes { get; set; }
 }

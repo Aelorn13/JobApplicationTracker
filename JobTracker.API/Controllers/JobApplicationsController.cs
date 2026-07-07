@@ -55,6 +55,7 @@ public class JobApplicationsController : ControllerBase
             SalaryMax = app.SalaryMax,
             Location = app.Location,
             ExpirationDate = app.ExpirationDate,
+            Notes = app.Notes,
             Tags = app.Tags.Select(t => t.Name).ToList()
         };
     }
@@ -93,6 +94,7 @@ public class JobApplicationsController : ControllerBase
             SalaryMin = dto.SalaryMin,
             SalaryMax = dto.SalaryMax,
             Location = dto.Location,
+            Notes = dto.Notes,
             ExpirationDate = dto.ExpirationDate
         };
         _service.Add(application, dto.Tags);

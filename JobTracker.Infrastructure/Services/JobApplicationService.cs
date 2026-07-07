@@ -68,7 +68,9 @@ public class JobApplicationService : IJobApplicationService
                 SalaryMax = app.SalaryMax,
                 Location = app.Location,
                 ExpirationDate = app.ExpirationDate,
+                Notes = app.Notes,
                 Tags = app.Tags.Select(t => t.Name).ToList()
+
             }).ToList(),
             TotalCount = totalCount,
             Page = page,
@@ -120,7 +122,7 @@ public class JobApplicationService : IJobApplicationService
             existingApp.SalaryMax = dto.SalaryMax;
             existingApp.Location = dto.Location;
             existingApp.ExpirationDate = dto.ExpirationDate;
-
+            existingApp.Notes = dto.Notes;
             existingApp.Tags.Clear();
 
             if (dto.Tags != null && dto.Tags.Any())

@@ -17,4 +17,5 @@ public class JobApplication
     public DateTime? ExpirationDate { get; set; }
 
     public List<Tag> Tags { get; set; } = new();
+    public string? Notes { get; set; }
 }

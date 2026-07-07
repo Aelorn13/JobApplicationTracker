@@ -21,4 +21,6 @@ public class CreateJobApplicationDto
     public string? Location { get; set; }
     public DateTime? ExpirationDate { get; set; }
     public List<string>? Tags { get; set; }
+    [MaxLength(2000)]
+    public string? Notes { get; set; }
 }
