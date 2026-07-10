@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { STATUS_OPTIONS } from "../constants";
+import { useDuplicateCheck } from "../hooks/useDuplicateCheck";
 
 const EMPTY_FORM = {
   companyName: "",
@@ -17,7 +18,7 @@ const EMPTY_FORM = {
 
 export default function ApplicationForm({ initialData, onSubmit, onCancel, isEditMode }) {
   const [formData, setFormData] = useState(EMPTY_FORM);
-  const [isSubmitting, setIsSubmitting] = useState(false); // фикс: блокировка кнопки
+  const [isSubmitting, setIsSubmitting] = useState(false); 
 
   useEffect(() => {
     if (!initialData) return;
@@ -41,6 +42,8 @@ export default function ApplicationForm({ initialData, onSubmit, onCancel, isEdi
     }));
   }, [initialData]);
 
+  const { duplicate, isChecking } = useDuplicateCheck(formData.companyName, !isEditMode);
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -93,6 +96,22 @@ export default function ApplicationForm({ initialData, onSubmit, onCancel, isEdi
         onChange={handleChange}
         required
       />
+      {!isEditMode && isChecking && <span style={{ color: "#888", fontSize: "12px" }}>Checking...</span>}
+      {!isEditMode && duplicate && (
+        <div
+          style={{
+            padding: "10px",
+            background: "#fff3cd",
+            border: "1px solid #ffc107",
+            borderRadius: "4px",
+            fontSize: "13px",
+          }}
+        >
+          ⚠️ You already applied here on <strong>{new Date(duplicate.appliedDate).toLocaleDateString()}</strong> for{" "}
+          <strong>{duplicate.position}</strong> — status:{" "}
+          <strong>{duplicate.status.replace(/([A-Z])/g, " $1").trim()}</strong>
+        </div>
+      )}
       <input
         type="text"
         name="position"

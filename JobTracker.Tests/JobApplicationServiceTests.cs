@@ -293,6 +293,77 @@ public class JobApplicationServiceTests : TestBase
         var app2 = new JobApplication { CompanyName = "B", Position = "Dev", Status = ApplicationStatus.Pending, UserId = "u1" };
         service.Add(app2, new List<string> { "React", "Azure" });
 
-        Assert.Equal(3, context.Tags.Count()); 
+        Assert.Equal(3, context.Tags.Count());
+    }
+    [Fact]
+    public void FindDuplicate_ExistingCompany_ReturnsApplication()
+    {
+        var context = CreateInMemoryContext();
+        context.JobApplications.Add(new JobApplication
+        {
+            CompanyName = "Google",
+            Position = "Developer",
+            Status = ApplicationStatus.Pending,
+            AppliedDate = DateTime.Now,
+            UserId = "user-1"
+        });
+        context.SaveChanges();
+
+        var service = new JobApplicationService(context);
+        var result = service.FindDuplicate("Google", "user-1");
+
+        Assert.NotNull(result);
+        Assert.Equal("Google", result.CompanyName);
+    }
+
+    [Fact]
+    public void FindDuplicate_CaseInsensitive_ReturnsApplication()
+    {
+        var context = CreateInMemoryContext();
+        context.JobApplications.Add(new JobApplication
+        {
+            CompanyName = "Google",
+            Position = "Developer",
+            Status = ApplicationStatus.Pending,
+            AppliedDate = DateTime.Now,
+            UserId = "user-1"
+        });
+        context.SaveChanges();
+
+        var service = new JobApplicationService(context);
+        var result = service.FindDuplicate("google", "user-1");
+
+        Assert.NotNull(result);
+    }
+
+    [Fact]
+    public void FindDuplicate_NonExistingCompany_ReturnsNull()
+    {
+        var context = CreateInMemoryContext();
+        var service = new JobApplicationService(context);
+
+        var result = service.FindDuplicate("Amazon", "user-1");
+
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void FindDuplicate_DifferentUser_ReturnsNull()
+    {
+        var context = CreateInMemoryContext();
+        context.JobApplications.Add(new JobApplication
+        {
+            CompanyName = "Google",
+            Position = "Developer",
+            Status = ApplicationStatus.Pending,
+            AppliedDate = DateTime.Now,
+            UserId = "user-1"
+        });
+        context.SaveChanges();
+
+        var service = new JobApplicationService(context);
+        var result = service.FindDuplicate("Google", "user-2");
+
+        Assert.Null(result);
     }
 }

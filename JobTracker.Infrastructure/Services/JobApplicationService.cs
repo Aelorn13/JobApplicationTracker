@@ -136,4 +136,13 @@ public class JobApplicationService : IJobApplicationService
             _context.SaveChanges();
         }
     }
+    public JobApplication? FindDuplicate(string companyName, string userId)
+    {
+        var normalized = companyName.ToLower().Trim();
+        return _context.JobApplications
+            .Where(a => a.UserId == userId &&
+                   a.CompanyName.ToLower() == normalized)
+            .OrderByDescending(a => a.AppliedDate)
+            .FirstOrDefault();
+    }
 }

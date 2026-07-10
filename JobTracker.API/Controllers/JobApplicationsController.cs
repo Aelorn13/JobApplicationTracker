@@ -118,5 +118,28 @@ public class JobApplicationsController : ControllerBase
         if (!isDeleted) return NotFound();
         return NoContent();
     }
+    [HttpGet("check-duplicate")]
+    public IActionResult CheckDuplicate([FromQuery] string companyName)
+    {
+        if (string.IsNullOrWhiteSpace(companyName))
+            return BadRequest("Company name is required");
+
+        var duplicate = _service.FindDuplicate(companyName, GetUserId());
+
+        if (duplicate == null)
+            return Ok(new { isDuplicate = false });
+
+        return Ok(new
+        {
+            isDuplicate = true,
+            existing = new
+            {
+                id = duplicate.Id,
+                position = duplicate.Position,
+                status = duplicate.Status.ToString(),
+                appliedDate = duplicate.AppliedDate,
+            }
+        });
+    }
 
 }

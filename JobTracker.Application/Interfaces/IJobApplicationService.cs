@@ -16,4 +16,5 @@ public interface IJobApplicationService
     void Add(JobApplication application, List<string>? tagNames = null); 
     bool Delete(int id, string userId);
     void Update(int id, UpdateJobApplicationDto dto, string userId);
+    JobApplication? FindDuplicate(string companyName, string userId);
 }
