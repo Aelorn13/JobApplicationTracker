@@ -11,7 +11,8 @@ public interface IJobApplicationService
     DateTime? from = null,
     DateTime? to = null,
     int page = 1,
-    int pageSize = 10);
+    int pageSize = 10,
+    string sortBy = "status"); 
     JobApplication? GetById(int id, string userId);
     void Add(JobApplication application, List<string>? tagNames = null); 
     bool Delete(int id, string userId);

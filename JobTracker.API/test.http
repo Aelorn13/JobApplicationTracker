@@ -7,88 +7,22 @@ Content-Type: application/json
     "password": "Password123!"
 }
 
-### 2. Создать заявку с тегами
-POST http://localhost:5141/api/JobApplications
-Authorization: Bearer <токен>
-Content-Type: application/json
+### Сортировка по дате (новые первые)
+GET http://localhost:5141/api/JobApplications?sortBy=date_desc
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjM2NWEyMTA5LTU3YzYtNGEwZC05MDQ2LTFjN2MyZDgxMjNjZSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6ImpvaG5AZXhhbXBsZS5jb20iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiSm9obiBEb2UiLCJleHAiOjE3ODM5NDI2MzgsImlzcyI6IkpvYlRyYWNrZXJBUEkiLCJhdWQiOiJKb2JUcmFja2VyQ2xpZW50In0.m7TtrcIZ4zwB1UWwGz2WyjsA3ZxnTTrd3t2UjCQbBj8
 
-{
-    "companyName": "Google",
-    "position": "Backend Developer",
-    "status": "Pending",
-    "appliedDate": "2026-06-22T00:00:00",
-    "location": "London, Remote",
-    "salaryMin": 80000,
-    "salaryMax": 100000,
-    "tags": [".NET", "Azure"]
-}
+### Сортировка по дате (старые первые)
+GET http://localhost:5141/api/JobApplications?sortBy=date_asc
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjM2NWEyMTA5LTU3YzYtNGEwZC05MDQ2LTFjN2MyZDgxMjNjZSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6ImpvaG5AZXhhbXBsZS5jb20iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiSm9obiBEb2UiLCJleHAiOjE3ODM5NDI2MzgsImlzcyI6IkpvYlRyYWNrZXJBUEkiLCJhdWQiOiJKb2JUcmFja2VyQ2xpZW50In0.m7TtrcIZ4zwB1UWwGz2WyjsA3ZxnTTrd3t2UjCQbBj8
 
-### 3. Получить все заявки — проверить что теги сохранились
+### Сортировка по компании (A-Z)
+GET http://localhost:5141/api/JobApplications?sortBy=company
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjM2NWEyMTA5LTU3YzYtNGEwZC05MDQ2LTFjN2MyZDgxMjNjZSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6ImpvaG5AZXhhbXBsZS5jb20iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiSm9obiBEb2UiLCJleHAiOjE3ODM5NDI2MzgsImlzcyI6IkpvYlRyYWNrZXJBUEkiLCJhdWQiOiJKb2JUcmFja2VyQ2xpZW50In0.m7TtrcIZ4zwB1UWwGz2WyjsA3ZxnTTrd3t2UjCQbBj8
+
+### Сортировка по зарплате (высокая сначала)
+GET http://localhost:5141/api/JobApplications?sortBy=salary
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjM2NWEyMTA5LTU3YzYtNGEwZC05MDQ2LTFjN2MyZDgxMjNjZSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6ImpvaG5AZXhhbXBsZS5jb20iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiSm9obiBEb2UiLCJleHAiOjE3ODM5NDI2MzgsImlzcyI6IkpvYlRyYWNrZXJBUEkiLCJhdWQiOiJKb2JUcmFja2VyQ2xpZW50In0.m7TtrcIZ4zwB1UWwGz2WyjsA3ZxnTTrd3t2UjCQbBj8
+
+### Дефолт — по статусу (Interview/Offer первые)
 GET http://localhost:5141/api/JobApplications
-Authorization: Bearer <токен>
-
-### 4. Получить заявку по id — запомни id из шага 3
-GET http://localhost:5141/api/JobApplications/1
-Authorization: Bearer <токен>
-
-### 5. Обновить — заменить теги, добавить зарплату
-PUT http://localhost:5141/api/JobApplications/1
-Authorization: Bearer <токен>
-Content-Type: application/json
-
-{
-    "companyName": "Google",
-    "position": "Senior Backend Developer",
-    "status": "Interview",
-    "appliedDate": "2026-06-22T00:00:00",
-    "location": "London, Hybrid",
-    "salaryMin": 90000,
-    "salaryMax": 120000,
-    "expirationDate": "2026-07-30T00:00:00",
-    "tags": ["React"]
-}
-
-### 6. Проверить что теги заменились а не задублировались
-GET http://localhost:5141/api/JobApplications/1
-Authorization: Bearer <токен>
-
-### 7. Парсинг вакансии
-POST http://localhost:5141/api/JobApplications/parse
-Authorization: Bearer <токен>
-Content-Type: application/json
-
-{
-    "jobText": ".NET Developer - Global Sports Company - London\n\nTech stack: .NET 9, ASP.NET Core, C#, Azure DevOps, EF Core, SQL Server\n\nOur client is a global sports brand. They are looking for a .NET Developer.\n\nSalary: £75,000 - £95,000\n\nLocation: London, UK / Remote Working"
-}
-
-### 8. Создать заявку через парсинг вручную с данными из шага 7
-POST http://localhost:5141/api/JobApplications
-Authorization: Bearer <токен>
-Content-Type: application/json
-
-{
-    "companyName": "Global Sports Company",
-    "position": ".NET Developer",
-    "status": "Pending",
-    "appliedDate": "2026-06-22T00:00:00",
-    "location": "London, UK / Remote Working",
-    "salaryMin": 75000,
-    "salaryMax": 95000,
-    "tags": [".NET 9", "ASP.NET Core", "C#", "Azure DevOps", "EF Core", "SQL Server"]
-}
-
-### 9. Удалить заявку
-DELETE http://localhost:5141/api/JobApplications/1
-Authorization: Bearer <токен>
-
-### 10. Убедиться что удалилась
-GET http://localhost:5141/api/JobApplications
-Authorization: Bearer <токен>
-
-### 11. Фильтр по статусу
-GET http://localhost:5141/api/JobApplications?status=Interview
-Authorization: Bearer <токен>
-
-### 12. Пагинация
-GET http://localhost:5141/api/JobApplications?page=1&pageSize=2
-Authorization: Bearer <токен>
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjM2NWEyMTA5LTU3YzYtNGEwZC05MDQ2LTFjN2MyZDgxMjNjZSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6ImpvaG5AZXhhbXBsZS5jb20iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiSm9obiBEb2UiLCJleHAiOjE3ODM5NDI2MzgsImlzcyI6IkpvYlRyYWNrZXJBUEkiLCJhdWQiOiJKb2JUcmFja2VyQ2xpZW50In0.m7TtrcIZ4zwB1UWwGz2WyjsA3ZxnTTrd3t2UjCQbBj8

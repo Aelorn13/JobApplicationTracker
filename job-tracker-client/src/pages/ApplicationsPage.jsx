@@ -26,6 +26,8 @@ export default function ApplicationsPage() {
     addApplication,
     deleteApplication,
     updateApplication,
+    sortBy,
+    setSortBy,
   } = useApplications();
 
   const [editingApp, setEditingApp] = useState(null);
@@ -100,7 +102,18 @@ export default function ApplicationsPage() {
             ))}
           </select>
         </div>
-
+        <div>
+          <label htmlFor="sortBy" style={{ marginRight: "10px" }}>
+            Sort by:
+          </label>
+          <select id="sortBy" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+            <option value="status">Status (default)</option>
+            <option value="date_desc">Date (newest first)</option>
+            <option value="date_asc">Date (oldest first)</option>
+            <option value="company">Company (A-Z)</option>
+            <option value="salary">Salary (highest first)</option>
+          </select>
+        </div>
         <div>
           <input
             type="text"

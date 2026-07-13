@@ -66,9 +66,10 @@ public class JobApplicationsController : ControllerBase
         [FromQuery] DateTime? from,
         [FromQuery] DateTime? to,
         [FromQuery] int page = 1,
-        [FromQuery] int pageSize = 10)
+        [FromQuery] int pageSize = 10,
+        [FromQuery] string sortBy = "status")
     {
-        var result = _service.GetAll(GetUserId(), status, from, to, page, pageSize);
+        var result = _service.GetAll(GetUserId(), status, from, to, page, pageSize,sortBy);
         return Ok(result);
     }
 

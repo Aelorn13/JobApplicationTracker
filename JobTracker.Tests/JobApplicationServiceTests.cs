@@ -411,4 +411,37 @@ public class JobApplicationServiceTests : TestBase
 
         Assert.Equal("New", result.Items[0].CompanyName);
     }
+    [Fact]
+    public void GetAll_SortByCompany_ReturnsAlphabetically()
+    {
+        var context = CreateInMemoryContext();
+        context.JobApplications.AddRange(
+            new JobApplication { CompanyName = "Zebra", Position = "Dev", Status = ApplicationStatus.Pending, AppliedDate = DateTime.Now, UserId = "u1" },
+            new JobApplication { CompanyName = "Apple", Position = "Dev", Status = ApplicationStatus.Pending, AppliedDate = DateTime.Now, UserId = "u1" },
+            new JobApplication { CompanyName = "Microsoft", Position = "Dev", Status = ApplicationStatus.Pending, AppliedDate = DateTime.Now, UserId = "u1" }
+        );
+        context.SaveChanges();
+
+        var service = new JobApplicationService(context);
+        var result = service.GetAll("u1", sortBy: "company");
+
+        Assert.Equal("Apple", result.Items[0].CompanyName);
+        Assert.Equal("Zebra", result.Items.Last().CompanyName);
+    }
+
+    [Fact]
+    public void GetAll_SortByDateDesc_ReturnsNewestFirst()
+    {
+        var context = CreateInMemoryContext();
+        context.JobApplications.AddRange(
+            new JobApplication { CompanyName = "Old", Position = "Dev", Status = ApplicationStatus.Pending, AppliedDate = DateTime.Now.AddDays(-10), UserId = "u1" },
+            new JobApplication { CompanyName = "New", Position = "Dev", Status = ApplicationStatus.Pending, AppliedDate = DateTime.Now, UserId = "u1" }
+        );
+        context.SaveChanges();
+
+        var service = new JobApplicationService(context);
+        var result = service.GetAll("u1", sortBy: "date_desc");
+
+        Assert.Equal("New", result.Items[0].CompanyName);
+    }
 }

@@ -7,13 +7,17 @@ export function useApplications() {
   const [error, setError] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState("status");
 
   const fetchApplications = useCallback(async () => {
     setIsLoading(true);
     setError("");
     try {
-      const url = filterStatus ? `/JobApplications?status=${filterStatus}` : "/JobApplications";
-      const response = await api.get(url);
+      const params = new URLSearchParams();
+      if (filterStatus) params.append("status", filterStatus);
+      if (sortBy !== "status") params.append("sortBy", sortBy);
+
+      const response = await api.get(`/JobApplications?${params.toString()}`);
       const items = response.data.items || response.data;
       setApplications(Array.isArray(items) ? items : []);
     } catch {
@@ -21,7 +25,7 @@ export function useApplications() {
     } finally {
       setIsLoading(false);
     }
-  }, [filterStatus]);
+  }, [filterStatus, sortBy]);
 
   const filteredApplications = searchQuery.trim()
     ? applications.filter(
@@ -37,15 +41,7 @@ export function useApplications() {
 
   const addApplication = async (payload) => {
     const response = await api.post("/JobApplications", payload);
-    setApplications((prev) => {
-      const updated = [...prev, response.data];
-      return updated.sort((a, b) => {
-        const priority = { Offer: 0, Interview: 1, PhoneScreen: 2, Pending: 3, Rejected: 4 };
-        const diff = (priority[a.status] ?? 4) - (priority[b.status] ?? 4);
-        if (diff !== 0) return diff;
-        return new Date(b.appliedDate) - new Date(a.appliedDate);
-      });
-    });
+    await fetchApplications();
   };
 
   const deleteApplication = async (id) => {

@@ -34,7 +34,8 @@ public class JobApplicationService : IJobApplicationService
         DateTime? from = null,
         DateTime? to = null,
         int page = 1,
-        int pageSize = 10)
+        int pageSize = 10,
+        string sortBy = "status")
     {
         var query = _context.JobApplications
             .Include(app => app.Tags)
@@ -54,16 +55,26 @@ public class JobApplicationService : IJobApplicationService
             .Take(pageSize)
             .ToList();
 
-        // сортировка в памяти после ToList — работает одинаково в InMemory и SQL Server
-        items = items
-            .OrderBy(app =>
-                app.Status == ApplicationStatus.Offer ? 0
-                : app.Status == ApplicationStatus.Interview ? 1
-                : app.Status == ApplicationStatus.PhoneScreen ? 2
-                : app.Status == ApplicationStatus.Pending ? 3
-                : 4)
-            .ThenByDescending(app => app.AppliedDate)
-            .ToList();
+
+        items = sortBy switch
+        {
+            "date_asc" => items.OrderBy(a => a.AppliedDate).ToList(),
+            "date_desc" => items.OrderByDescending(a => a.AppliedDate).ToList(),
+            "company" => items.OrderBy(a => a.CompanyName).ToList(),
+            "salary" => items
+                .OrderByDescending(a => a.SalaryMax ?? 0)
+                .ThenByDescending(a => a.SalaryMin ?? 0)
+                .ToList(),
+            _ => items // "status" — дефолт, уже отсортирован по приоритету
+                .OrderBy(a =>
+                    a.Status == ApplicationStatus.Offer ? 0
+                    : a.Status == ApplicationStatus.Interview ? 1
+                    : a.Status == ApplicationStatus.PhoneScreen ? 2
+                    : a.Status == ApplicationStatus.Pending ? 3
+                    : 4)
+                .ThenByDescending(a => a.AppliedDate)
+                .ToList()
+        };
 
         return new PaginatedResultDto<JobApplicationResponseDto>
         {
