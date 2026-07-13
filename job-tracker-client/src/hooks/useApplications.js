@@ -68,6 +68,8 @@ export function useApplications() {
     setFilterStatus,
     searchQuery,
     setSearchQuery,
+    sortBy,
+    setSortBy,
     addApplication,
     deleteApplication,
     updateApplication,

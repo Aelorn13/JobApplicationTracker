@@ -38,7 +38,7 @@ export default function LoginPage() {
       <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="email">Email:</label>
-          <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+          <input type="email" id="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
         </div>
 
         <div>
@@ -46,6 +46,7 @@ export default function LoginPage() {
           <input
             type="password"
             id="password"
+            autoComplete="current-password" 
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
