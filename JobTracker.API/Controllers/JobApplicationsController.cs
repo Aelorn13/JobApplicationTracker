@@ -83,6 +83,8 @@ public class JobApplicationsController : ControllerBase
     [HttpPost]
     public IActionResult Add([FromBody] CreateJobApplicationDto dto)
     {
+        var baseDate = dto.AppliedDate > DateTime.UtcNow ? dto.AppliedDate : DateTime.UtcNow;
+
         var application = new JobApplication
         {
             CompanyName = dto.CompanyName,
@@ -95,7 +97,8 @@ public class JobApplicationsController : ControllerBase
             SalaryMax = dto.SalaryMax,
             Location = dto.Location,
             Notes = dto.Notes,
-            ExpirationDate = dto.ExpirationDate
+            ExpirationDate = dto.ExpirationDate ?? baseDate.AddDays(30),
+            Tags = new List<Tag>()
         };
         _service.Add(application, dto.Tags);
         return CreatedAtAction(nameof(GetById), new { id = application.Id }, MapToDto(application));

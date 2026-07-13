@@ -18,7 +18,7 @@ const EMPTY_FORM = {
 
 export default function ApplicationForm({ initialData, onSubmit, onCancel, isEditMode }) {
   const [formData, setFormData] = useState(EMPTY_FORM);
-  const [isSubmitting, setIsSubmitting] = useState(false); 
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (!initialData) return;
@@ -43,7 +43,7 @@ export default function ApplicationForm({ initialData, onSubmit, onCancel, isEdi
   }, [initialData]);
 
   const { duplicate, isChecking } = useDuplicateCheck(formData.companyName, !isEditMode);
-  
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -150,7 +150,18 @@ export default function ApplicationForm({ initialData, onSubmit, onCancel, isEdi
         />
       </div>
 
-      <input type="date" name="expirationDate" value={formData.expirationDate} onChange={handleChange} />
+      <div>
+        <label style={{ fontSize: "13px", color: "#666", display: "block", marginBottom: "4px" }}>
+          Application deadline (optional, defaults to 30 days from today)
+        </label>
+        <input
+          type="date"
+          name="expirationDate"
+          value={formData.expirationDate}
+          onChange={handleChange}
+          style={{ width: "100%" }}
+        />
+      </div>
       <input
         type="text"
         name="tagsString"

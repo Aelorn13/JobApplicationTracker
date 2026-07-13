@@ -29,12 +29,12 @@ public class JobApplicationService : IJobApplicationService
         return resolvedTags;
     }
     public PaginatedResultDto<JobApplicationResponseDto> GetAll(
-    string userId,
-    ApplicationStatus? status = null,
-    DateTime? from = null,
-    DateTime? to = null,
-    int page = 1,
-    int pageSize = 10)
+        string userId,
+        ApplicationStatus? status = null,
+        DateTime? from = null,
+        DateTime? to = null,
+        int page = 1,
+        int pageSize = 10)
     {
         var query = _context.JobApplications
             .Include(app => app.Tags)
@@ -54,6 +54,17 @@ public class JobApplicationService : IJobApplicationService
             .Take(pageSize)
             .ToList();
 
+        // сортировка в памяти после ToList — работает одинаково в InMemory и SQL Server
+        items = items
+            .OrderBy(app =>
+                app.Status == ApplicationStatus.Offer ? 0
+                : app.Status == ApplicationStatus.Interview ? 1
+                : app.Status == ApplicationStatus.PhoneScreen ? 2
+                : app.Status == ApplicationStatus.Pending ? 3
+                : 4)
+            .ThenByDescending(app => app.AppliedDate)
+            .ToList();
+
         return new PaginatedResultDto<JobApplicationResponseDto>
         {
             Items = items.Select(app => new JobApplicationResponseDto
@@ -70,7 +81,6 @@ public class JobApplicationService : IJobApplicationService
                 ExpirationDate = app.ExpirationDate,
                 Notes = app.Notes,
                 Tags = app.Tags.Select(t => t.Name).ToList()
-
             }).ToList(),
             TotalCount = totalCount,
             Page = page,

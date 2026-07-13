@@ -1,3 +1,8 @@
+const isStale = (app) => {
+  if (!["Pending", "PhoneScreen"].includes(app.status)) return false;
+  const daysSinceApplied = (Date.now() - new Date(app.appliedDate)) / (1000 * 60 * 60 * 24);
+  return daysSinceApplied > 30;
+};
 export default function ApplicationCard({ app, onEdit, onDelete }) {
   return (
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
@@ -12,6 +17,20 @@ export default function ApplicationCard({ app, onEdit, onDelete }) {
         )}
         <br />
         <span>Status: {app.status.replace(/([A-Z])/g, " $1").trim()}</span>
+        {isStale(app) && (
+          <span
+            style={{
+              marginLeft: "8px",
+              fontSize: "11px",
+              background: "#fff3cd",
+              color: "#856404",
+              padding: "1px 6px",
+              borderRadius: "4px",
+            }}
+          >
+            ⚠️ No response
+          </span>
+        )}
         <span style={{ color: "#888", fontSize: "13px", marginLeft: "10px" }}>
           Applied: {new Date(app.appliedDate).toLocaleDateString()}
         </span>

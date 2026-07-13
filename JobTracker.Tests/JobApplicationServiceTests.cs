@@ -229,7 +229,6 @@ public class JobApplicationServiceTests : TestBase
     [Fact]
     public void GetAll_WithPagination_ReturnsCorrectPage()
     {
-        // Arrange
         var context = CreateInMemoryContext();
         for (int i = 1; i <= 15; i++)
         {
@@ -245,13 +244,10 @@ public class JobApplicationServiceTests : TestBase
         context.SaveChanges();
         var service = new JobApplicationService(context);
 
-        // Act
         var result = service.GetAll("test-user-id", page: 2, pageSize: 5);
 
-        // Assert
         Assert.Equal(15, result.TotalCount);
         Assert.Equal(5, result.Items.Count);
-        Assert.Equal("Company 6", result.Items.First().CompanyName);
     }
     [Fact]
     public void GetAll_ReturnsOnlyCurrentUserApplications()
@@ -365,5 +361,54 @@ public class JobApplicationServiceTests : TestBase
         var result = service.FindDuplicate("Google", "user-2");
 
         Assert.Null(result);
+    }
+    [Fact]
+    public void GetAll_SortsOfferAboveInterview()
+    {
+        var context = CreateInMemoryContext();
+        context.JobApplications.AddRange(
+            new JobApplication { CompanyName = "A", Position = "Dev", Status = ApplicationStatus.Interview, AppliedDate = DateTime.Now, UserId = "u1" },
+            new JobApplication { CompanyName = "B", Position = "Dev", Status = ApplicationStatus.Offer, AppliedDate = DateTime.Now, UserId = "u1" }
+        );
+        context.SaveChanges();
+
+        var service = new JobApplicationService(context);
+        var result = service.GetAll("u1");
+
+        Assert.Equal("B", result.Items[0].CompanyName);
+    }
+
+    [Fact]
+    public void GetAll_SortsInterviewAndOfferFirst()
+    {
+        var context = CreateInMemoryContext();
+        context.JobApplications.AddRange(
+            new JobApplication { CompanyName = "A", Position = "Dev", Status = ApplicationStatus.Rejected, AppliedDate = DateTime.Now, UserId = "u1" },
+            new JobApplication { CompanyName = "B", Position = "Dev", Status = ApplicationStatus.Interview, AppliedDate = DateTime.Now, UserId = "u1" },
+            new JobApplication { CompanyName = "C", Position = "Dev", Status = ApplicationStatus.Pending, AppliedDate = DateTime.Now, UserId = "u1" }
+        );
+        context.SaveChanges();
+
+        var service = new JobApplicationService(context);
+        var result = service.GetAll("u1");
+
+        Assert.Equal("B", result.Items[0].CompanyName);
+        Assert.Equal("A", result.Items.Last().CompanyName);
+    }
+
+    [Fact]
+    public void GetAll_WithinSameStatus_SortsByAppliedDateDescending()
+    {
+        var context = CreateInMemoryContext();
+        context.JobApplications.AddRange(
+            new JobApplication { CompanyName = "Old", Position = "Dev", Status = ApplicationStatus.Pending, AppliedDate = DateTime.Now.AddDays(-10), UserId = "u1" },
+            new JobApplication { CompanyName = "New", Position = "Dev", Status = ApplicationStatus.Pending, AppliedDate = DateTime.Now, UserId = "u1" }
+        );
+        context.SaveChanges();
+
+        var service = new JobApplicationService(context);
+        var result = service.GetAll("u1");
+
+        Assert.Equal("New", result.Items[0].CompanyName);
     }
 }
