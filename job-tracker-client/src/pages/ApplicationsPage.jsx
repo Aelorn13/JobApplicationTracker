@@ -6,6 +6,7 @@ import { STATUS_OPTIONS } from '../constants';
 import ApplicationCard from '../components/ApplicationCard';
 import ApplicationForm from '../components/ApplicationForm';
 import JobParser from '../components/JobParser';
+import StatusSummary from '../components/StatusSummary';
 
 export default function ApplicationsPage() {
     const { logout } = useAuth();
@@ -43,7 +44,7 @@ export default function ApplicationsPage() {
             setParsedData(null);
         } catch {
             setError('Failed to add application.');
-            throw new Error('add failed'); // фикс: пробрасываем чтобы форма не сбросилась
+            throw new Error('add failed'); 
         }
     };
 
@@ -53,7 +54,7 @@ export default function ApplicationsPage() {
             setEditingApp(null);
         } catch {
             setError('Failed to update application.');
-            throw new Error('edit failed'); // фикс: пробрасываем чтобы форма не сбросилась
+            throw new Error('edit failed');
         }
     };
 
@@ -73,6 +74,7 @@ export default function ApplicationsPage() {
             </header>
 
             {error && <div style={{ color: 'red', marginBottom: '10px' }}>{error}</div>}
+            <StatusSummary applications={applications} />
 
             <JobParser onParsed={handleParsed} />
 
@@ -115,7 +117,7 @@ export default function ApplicationsPage() {
                             <li key={app.id} style={{ border: '1px solid #ccc', margin: '10px 0', padding: '15px' }}>
                                 {editingApp?.id === app.id ? (
                                     <ApplicationForm
-                                        key={editingApp.id} // фикс: сбрасывает форму при повторном Edit
+                                        key={editingApp.id} 
                                         initialData={editingApp}
                                         onSubmit={handleEdit}
                                         onCancel={() => setEditingApp(null)}
