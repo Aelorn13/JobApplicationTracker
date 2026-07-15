@@ -1,82 +1,70 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import api from "../api/axios";
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import api from '../api/axios';
+import AuthLayout from '../components/AuthLayout';
 
 export default function RegisterPage() {
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
-  });
-  const [error, setError] = useState("");
+    const [formData, setFormData] = useState({ firstName: '', lastName: '', email: '', password: '' });
+    const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const navigate = useNavigate();
 
-  const navigate = useNavigate();
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError('');
+        setIsLoading(true);
+        try {
+            await api.post('/auth/register', formData);
+            navigate('/login');
+        } catch (err) {
+            setError(err.response?.data || 'Registration failed. Please check your details.');
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
+    return (
+        <AuthLayout
+            title="Create account"
+            subtitle="Start tracking your job applications"
+            bottomText="Already have an account?"
+            bottomLinkText="Sign in"
+            bottomLinkTo="/login"
+        >
+            {error && <div className="alert alert-error" style={{ marginBottom: '16px' }}>{error}</div>}
 
-    try {
-      await api.post("/auth/register", formData);
-      navigate("/login");
-    } catch (err) {
-      const errorMessage = err.response?.data;
-      setError(typeof errorMessage === "string" ? errorMessage : JSON.stringify(errorMessage));
-    }
-  };
-
-  return (
-    <div>
-      <h2>Register</h2>
-
-      {error && <div style={{ color: "red" }}>{error}</div>}
-
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="firstName">First Name:</label>
-          <input
-            type="text"
-            id="firstName"
-            name="firstName"
-            value={formData.firstName}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <div>
-          <label htmlFor="lastName">Last Name:</label>
-          <input type="text" id="lastName" name="lastName" value={formData.lastName} onChange={handleChange} required />
-        </div>
-
-        <div>
-          <label htmlFor="email">Email:</label>
-          <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} required />
-        </div>
-
-        <div>
-          <label htmlFor="password">Password:</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <button type="submit">Register</button>
-        <p>
-          Already have an account? <a href="/login">Login here</a>
-        </p>
-      </form>
-    </div>
-  );
+            <form onSubmit={handleSubmit} className="form-col">
+                <div className="form-grid-2">
+                    <div className="form-group">
+                        <label>First Name</label>
+                        <input type="text" name="firstName" autoComplete="given-name"
+                            value={formData.firstName} onChange={handleChange} placeholder="John" required />
+                    </div>
+                    <div className="form-group">
+                        <label>Last Name</label>
+                        <input type="text" name="lastName" autoComplete="family-name"
+                            value={formData.lastName} onChange={handleChange} placeholder="Doe" required />
+                    </div>
+                </div>
+                <div className="form-group">
+                    <label>Email</label>
+                    <input type="email" name="email" autoComplete="email"
+                        value={formData.email} onChange={handleChange} placeholder="you@example.com" required />
+                </div>
+                <div className="form-group">
+                    <label>Password</label>
+                    <input type="password" name="password" autoComplete="new-password"
+                        value={formData.password} onChange={handleChange} placeholder="Min. 6 characters" required />
+                </div>
+                <button type="submit" className="btn btn-primary btn-full" disabled={isLoading} style={{ marginTop: '4px' }}>
+                    {isLoading ? 'Creating account...' : 'Create account'}
+                </button>
+            </form>
+        </AuthLayout>
+    );
 }

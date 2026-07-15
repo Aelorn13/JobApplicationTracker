@@ -1,0 +1,201 @@
+/* ─── CSS переменные ─── */
+:root {
+    --blue-primary: #2563EB;
+    --blue-light: #EFF6FF;
+    --bg-page: #F8FAFC;
+    --bg-card: #FFFFFF;
+    --border: #E2E8F0;
+    --text-primary: #0F172A;
+    --text-secondary: #64748B;
+}
+
+/* ─── Reset ─── */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: var(--bg-page);
+    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+/* ─── Базовые элементы ─── */
+input, select, textarea {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 14px;
+    color: var(--text-primary);
+    background: var(--bg-card);
+    outline: none;
+    transition: border-color 0.15s;
+    font-family: inherit;
+}
+input:focus, select:focus, textarea:focus {
+    border-color: var(--blue-primary);
+}
+select {
+    -webkit-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748B' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 32px;
+}
+label {
+    font-size: 13px;
+    color: var(--text-secondary);
+    display: block;
+    margin-bottom: 4px;
+}
+
+/* ─── Кнопки ─── */
+.btn {
+    cursor: pointer;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 8px 16px;
+    transition: opacity 0.15s;
+    font-family: inherit;
+    display: inline-flex;
+    align-items: center;
+}
+.btn:hover:not(:disabled) { opacity: 0.85; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-primary  { background: var(--blue-primary); color: #fff; }
+.btn-secondary { background: var(--bg-page); color: var(--text-primary); border: 1px solid var(--border); }
+.btn-danger   { background: #FEF2F2; color: #DC2626; border: 1px solid #FECACA; }
+.btn-ghost    { background: transparent; color: var(--text-secondary); border: 1px solid var(--border); }
+.btn-sm       { padding: 6px 12px; font-size: 13px; }
+.btn-full     { width: 100%; justify-content: center; }
+
+/* ─── Карточки ─── */
+.card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+}
+.card-sm  { padding: 16px; }
+.card-md  { padding: 20px; }
+.card-active { border-color: var(--blue-primary); }
+
+.auth-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 40px;
+    width: 100%;
+    max-width: 400px;
+}
+
+/* ─── Бейджи ─── */
+.badge {
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 12px;
+    font-weight: 500;
+    display: inline-block;
+}
+.badge-tag     { background: var(--blue-light); color: var(--blue-primary); }
+.badge-warning { background: #FEF3C7; color: #92400E; }
+
+/* Статусные бейджи — фон + цвет текста */
+.status-Pending     { background: #FEF3C7; color: #92400E; }
+.status-PhoneScreen { background: #EDE9FE; color: #5B21B6; }
+.status-Interview   { background: #DBEAFE; color: #1E40AF; }
+.status-Offer       { background: #D1FAE5; color: #065F46; }
+.status-Rejected    { background: #FEE2E2; color: #991B1B; }
+
+/* Цветные точки для StatusSummary */
+.dot-Pending     { background: #F59E0B; }
+.dot-PhoneScreen { background: #8B5CF6; }
+.dot-Interview   { background: #3B82F6; }
+.dot-Offer       { background: #10B981; }
+.dot-Rejected    { background: #EF4444; }
+
+/* ─── Алерты ─── */
+.alert {
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 14px;
+}
+.alert-error   { background: #FEF2F2; border: 1px solid #FECACA; color: #DC2626; }
+.alert-warning { background: #FFFBEB; border: 1px solid #FCD34D; color: #92400E; font-size: 13px; }
+
+/* ─── Layout ─── */
+.page-center {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+}
+.page-main {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 24px 16px;
+}
+
+/* ─── Header ─── */
+.header {
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+.header-logo {
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--blue-primary);
+}
+
+/* ─── Формы ─── */
+.form-col   { display: flex; flex-direction: column; gap: 14px; }
+.form-group { display: flex; flex-direction: column; }
+.form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.form-actions { display: flex; gap: 10px; margin-top: 4px; }
+
+/* ─── Специфичные блоки ─── */
+.notes-block {
+    background: var(--bg-page);
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    white-space: pre-wrap;
+}
+
+/* StatusSummary */
+.summary-bar   { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
+.summary-item  { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 8px 14px; display: flex; align-items: center; gap: 8px; }
+.summary-dot   { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.summary-total { background: var(--blue-light); border: 1px solid #BFDBFE; border-radius: 8px; padding: 8px 14px; display: flex; align-items: center; }
+
+/* Фильтры */
+.filters-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 16px; }
+.filter-select { width: auto; }
+.search-wrap { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 200px; }
+
+/* Карточка заявки */
+.app-card-outer  { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+.app-card-body   { flex: 1; min-width: 0; }
+.app-card-title  { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
+.app-card-status { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+.app-card-meta   { display: flex; gap: 16px; flex-wrap: wrap; font-size: 13px; color: var(--text-secondary); margin-bottom: 8px; }
+.app-card-tags   { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+.app-card-btns   { display: flex; gap: 8px; flex-shrink: 0; align-self: flex-start; }
