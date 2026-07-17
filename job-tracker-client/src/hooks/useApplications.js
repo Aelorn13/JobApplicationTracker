@@ -1,16 +1,27 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef, useLayoutEffect } from "react";
 import api from "../api/axios";
 
 export function useApplications() {
   const [applications, setApplications] = useState([]);
+  const [isFetching, setIsFetching] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("status");
+  const scrollRef = useRef(0);
 
   const fetchApplications = useCallback(async () => {
-    setIsLoading(true);
+    scrollRef.current = window.scrollY;
+
+    // первая загрузка — показываем полный лоадер
+    // повторные — только приглушаем список
+    if (applications.length === 0) {
+      setIsLoading(true);
+    } else {
+      setIsFetching(true);
+    }
+
     setError("");
     try {
       const params = new URLSearchParams();
@@ -24,8 +35,9 @@ export function useApplications() {
       setError("Failed to fetch applications.");
     } finally {
       setIsLoading(false);
+      setIsFetching(false);
     }
-  }, [filterStatus, sortBy]);
+  }, [filterStatus, sortBy, applications.length]);
 
   const filteredApplications = searchQuery.trim()
     ? applications.filter(
@@ -38,6 +50,12 @@ export function useApplications() {
   useEffect(() => {
     fetchApplications();
   }, [fetchApplications]);
+
+  useLayoutEffect(() => {
+    if (!isLoading) {
+      window.scrollTo(0, scrollRef.current);
+    }
+  }, [isLoading]);
 
   const addApplication = async (payload) => {
     const response = await api.post("/JobApplications", payload);
@@ -61,6 +79,7 @@ export function useApplications() {
   return {
     applications: filteredApplications,
     rawApplications: applications,
+    isFetching,
     isLoading,
     error,
     setError,
