@@ -63,15 +63,13 @@ builder.Services.AddHttpClient<IAiParsingService, GeminiService>(client =>
 });
 
 var app = builder.Build();
-app.UseMiddleware<ExceptionHandlingMiddleware>(); 
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseStatusCodePages(async context =>
 {
     var response = context.HttpContext.Response;
-
     if (response.ContentType?.Contains("application/json") == true) return;
 
-    var code = response.StatusCode;
-    var message = code switch
+    var message = response.StatusCode switch
     {
         401 => "Unauthorized",
         403 => "Forbidden",
@@ -79,12 +77,10 @@ app.UseStatusCodePages(async context =>
         _ => "An error occurred"
     };
 
-    response.ContentType = "application/json";
-    await response.WriteAsync(
-        System.Text.Json.JsonSerializer.Serialize(
-            new { status = code, message, path = context.HttpContext.Request.Path.ToString() },
-            new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase }
-        )
+    await ExceptionHandlingMiddleware.WriteErrorResponse(
+        context.HttpContext,
+        response.StatusCode,
+        message
     );
 });
 if (app.Environment.IsDevelopment())

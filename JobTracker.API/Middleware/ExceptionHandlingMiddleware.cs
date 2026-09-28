@@ -40,12 +40,16 @@ public class ExceptionHandlingMiddleware
             _ => (HttpStatusCode.InternalServerError, "An unexpected error occurred")
         };
 
+        await WriteErrorResponse(context, (int)statusCode, message);
+    }
+    public static async Task WriteErrorResponse(HttpContext context, int statusCode, string message)
+    {
         context.Response.ContentType = "application/json";
-        context.Response.StatusCode = (int)statusCode;
+        context.Response.StatusCode = statusCode;
 
         var response = new
         {
-            status = (int)statusCode,
+            status = statusCode,
             message,
             path = context.Request.Path.ToString()
         };
