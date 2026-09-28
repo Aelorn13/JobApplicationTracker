@@ -1,5 +1,9 @@
 # Job Application Tracker API
 
+# JobTracker
+
+![CI](https://github.com/Aelorn13/JobApplicationTracker/actions/workflows/ci.yml/badge.svg)
+
 REST API for tracking job applications built with ASP.NET Core 9, 
 Entity Framework Core, and SQL Server.
 
