@@ -2,6 +2,7 @@ using JobTracker.Infrastructure.Services;
 using JobTracker.Infrastructure.Data;
 using JobTracker.Infrastructure.Identity;
 using JobTracker.Application.Interfaces;
+using JobTracker.API.Middleware;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -62,7 +63,30 @@ builder.Services.AddHttpClient<IAiParsingService, GeminiService>(client =>
 });
 
 var app = builder.Build();
+app.UseMiddleware<ExceptionHandlingMiddleware>(); 
+app.UseStatusCodePages(async context =>
+{
+    var response = context.HttpContext.Response;
 
+    if (response.ContentType?.Contains("application/json") == true) return;
+
+    var code = response.StatusCode;
+    var message = code switch
+    {
+        401 => "Unauthorized",
+        403 => "Forbidden",
+        404 => "Resource not found",
+        _ => "An error occurred"
+    };
+
+    response.ContentType = "application/json";
+    await response.WriteAsync(
+        System.Text.Json.JsonSerializer.Serialize(
+            new { status = code, message, path = context.HttpContext.Request.Path.ToString() },
+            new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase }
+        )
+    );
+});
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
