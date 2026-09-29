@@ -1,28 +1,32 @@
-### 1. Логин (получить токен)
+### Регистрация
+POST http://localhost:5141/api/auth/register
+Content-Type: application/json
+
+{
+    "firstName": "Test",
+    "lastName": "User",
+    "email": "test@test.com",
+    "password": "Password123!"
+}
+
+### Неверный пароль
 POST http://localhost:5141/api/auth/login
 Content-Type: application/json
 
 {
-    "email": "john@example.com",
-    "password": "Password123!"
+    "email": "test@test.com",
+    "password": "wrongpassword"
 }
 
-### Сортировка по дате (новые первые)
-GET http://localhost:5141/api/JobApplications?sortBy=date_desc
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjM2NWEyMTA5LTU3YzYtNGEwZC05MDQ2LTFjN2MyZDgxMjNjZSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6ImpvaG5AZXhhbXBsZS5jb20iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiSm9obiBEb2UiLCJleHAiOjE3ODM5NDI2MzgsImlzcyI6IkpvYlRyYWNrZXJBUEkiLCJhdWQiOiJKb2JUcmFja2VyQ2xpZW50In0.m7TtrcIZ4zwB1UWwGz2WyjsA3ZxnTTrd3t2UjCQbBj8
+### Добавить заявку 
+POST http://localhost:5141/api/JobApplications
+Authorization: Bearer <токен>
+Content-Type: application/json
 
-### Сортировка по дате (старые первые)
-GET http://localhost:5141/api/JobApplications?sortBy=date_asc
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjM2NWEyMTA5LTU3YzYtNGEwZC05MDQ2LTFjN2MyZDgxMjNjZSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6ImpvaG5AZXhhbXBsZS5jb20iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiSm9obiBEb2UiLCJleHAiOjE3ODM5NDI2MzgsImlzcyI6IkpvYlRyYWNrZXJBUEkiLCJhdWQiOiJKb2JUcmFja2VyQ2xpZW50In0.m7TtrcIZ4zwB1UWwGz2WyjsA3ZxnTTrd3t2UjCQbBj8
-
-### Сортировка по компании (A-Z)
-GET http://localhost:5141/api/JobApplications?sortBy=company
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjM2NWEyMTA5LTU3YzYtNGEwZC05MDQ2LTFjN2MyZDgxMjNjZSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6ImpvaG5AZXhhbXBsZS5jb20iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiSm9obiBEb2UiLCJleHAiOjE3ODM5NDI2MzgsImlzcyI6IkpvYlRyYWNrZXJBUEkiLCJhdWQiOiJKb2JUcmFja2VyQ2xpZW50In0.m7TtrcIZ4zwB1UWwGz2WyjsA3ZxnTTrd3t2UjCQbBj8
-
-### Сортировка по зарплате (высокая сначала)
-GET http://localhost:5141/api/JobApplications?sortBy=salary
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjM2NWEyMTA5LTU3YzYtNGEwZC05MDQ2LTFjN2MyZDgxMjNjZSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6ImpvaG5AZXhhbXBsZS5jb20iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiSm9obiBEb2UiLCJleHAiOjE3ODM5NDI2MzgsImlzcyI6IkpvYlRyYWNrZXJBUEkiLCJhdWQiOiJKb2JUcmFja2VyQ2xpZW50In0.m7TtrcIZ4zwB1UWwGz2WyjsA3ZxnTTrd3t2UjCQbBj8
-
-### Дефолт — по статусу (Interview/Offer первые)
-GET http://localhost:5141/api/JobApplications
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjM2NWEyMTA5LTU3YzYtNGEwZC05MDQ2LTFjN2MyZDgxMjNjZSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6ImpvaG5AZXhhbXBsZS5jb20iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiSm9obiBEb2UiLCJleHAiOjE3ODM5NDI2MzgsImlzcyI6IkpvYlRyYWNrZXJBUEkiLCJhdWQiOiJKb2JUcmFja2VyQ2xpZW50In0.m7TtrcIZ4zwB1UWwGz2WyjsA3ZxnTTrd3t2UjCQbBj8
+{
+    "companyName": "Google",
+    "position": "Developer",
+    "status": "Pending",
+    "appliedDate": "2026-09-28T00:00:00",
+    "tags": [".NET", "Azure"]
+}
