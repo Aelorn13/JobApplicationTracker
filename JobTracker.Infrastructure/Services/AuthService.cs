@@ -1,13 +1,14 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json.Serialization;
 using JobTracker.Application.DTOs;
 using JobTracker.Application.Interfaces;
-using JobTracker.Domain.Entities;
+using JobTracker.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
-using JobTracker.Infrastructure.Identity;
 
 namespace JobTracker.Infrastructure.Services;
 
@@ -15,11 +16,16 @@ public class AuthService : IAuthService
 {
     private readonly UserManager<AppUser> _userManager;
     private readonly IConfiguration _configuration;
+    private readonly ILogger<AuthService> _logger;
 
-    public AuthService(UserManager<AppUser> userManager, IConfiguration configuration)
+    public AuthService(
+        UserManager<AppUser> userManager,
+        IConfiguration configuration,
+        ILogger<AuthService> logger)
     {
         _userManager = userManager;
         _configuration = configuration;
+        _logger = logger;
     }
 
     public async Task<string> Register(RegisterDto dto)
@@ -35,8 +41,14 @@ public class AuthService : IAuthService
         var result = await _userManager.CreateAsync(user, dto.Password);
 
         if (!result.Succeeded)
-            throw new Exception(string.Join(", ", result.Errors.Select(e => e.Description)));
+        {
+            var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+            _logger.LogWarning("Registration failed for {Email}: {Errors}",
+                MaskEmail(dto.Email), errors);
+            throw new Exception(errors);
+        }
 
+        _logger.LogInformation("New user registered: {Email}", MaskEmail(dto.Email));
         return GenerateToken(user);
     }
 
@@ -45,9 +57,20 @@ public class AuthService : IAuthService
         var user = await _userManager.FindByEmailAsync(dto.Email);
 
         if (user == null || !await _userManager.CheckPasswordAsync(user, dto.Password))
+        {
+            _logger.LogWarning("Failed login attempt for {Email}", MaskEmail(dto.Email));
             throw new Exception("Invalid email or password");
+        }
 
+        _logger.LogInformation("User logged in: {Email}", MaskEmail(dto.Email));
         return GenerateToken(user);
+    }
+
+    private static string MaskEmail(string email)
+    {
+        var atIndex = email.IndexOf('@');
+        if (atIndex <= 1) return "***";
+        return email[0] + "***" + email[atIndex..];
     }
 
     private string GenerateToken(AppUser user)

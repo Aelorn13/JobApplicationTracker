@@ -4,15 +4,21 @@ using JobTracker.Application.Interfaces;
 using JobTracker.Domain.Enums;
 using JobTracker.Application.DTOs;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace JobTracker.Infrastructure.Services;
 
 public class JobApplicationService : IJobApplicationService
 {
     private readonly AppDbContext _context;
-    public JobApplicationService(AppDbContext context)
+    private readonly ILogger<JobApplicationService> _logger;
+
+    public JobApplicationService(
+        AppDbContext context,
+        ILogger<JobApplicationService> logger)
     {
         _context = context;
+        _logger = logger;
     }
     private List<Tag> ResolveTags(List<string> tagNames)
     {
@@ -111,6 +117,15 @@ public class JobApplicationService : IJobApplicationService
         if (tagNames != null && tagNames.Any())
         {
             application.Tags = ResolveTags(tagNames);
+            _logger.LogInformation(
+                "Adding application for {Company} with {TagCount} tags",
+                application.CompanyName, tagNames.Count);
+        }
+        else
+        {
+            _logger.LogInformation(
+                "Adding application for {Company}",
+                application.CompanyName);
         }
 
         _context.JobApplications.Add(application);
@@ -119,10 +134,22 @@ public class JobApplicationService : IJobApplicationService
     public bool Delete(int id, string userId)
     {
         var app = _context.JobApplications
-        .FirstOrDefault(a => a.Id == id && a.UserId == userId);
-        if (app == null) return false;
+            .FirstOrDefault(a => a.Id == id && a.UserId == userId);
+
+        if (app == null)
+        {
+            _logger.LogWarning(
+                "Delete failed — application {Id} not found for user {UserId}",
+                id, userId);
+            return false;
+        }
+
         _context.JobApplications.Remove(app);
         _context.SaveChanges();
+
+        _logger.LogInformation(
+            "Deleted application {Id} ({Company})",
+            id, app.CompanyName);
         return true;
     }
     public void Update(int id, UpdateJobApplicationDto dto, string userId)
@@ -131,31 +158,37 @@ public class JobApplicationService : IJobApplicationService
             .Include(a => a.Tags)
             .FirstOrDefault(a => a.Id == id && a.UserId == userId);
 
-        if (existingApp != null)
+        if (existingApp == null)
         {
-            existingApp.CompanyName = dto.CompanyName;
-            existingApp.Position = dto.Position;
-            existingApp.Status = dto.Status;
-            existingApp.AppliedDate = dto.AppliedDate;
-
-            existingApp.RawDescription = dto.RawDescription;
-            existingApp.SalaryMin = dto.SalaryMin;
-            existingApp.SalaryMax = dto.SalaryMax;
-            existingApp.Location = dto.Location;
-            existingApp.ExpirationDate = dto.ExpirationDate;
-            existingApp.Notes = dto.Notes;
-            existingApp.Tags.Clear();
-
-            if (dto.Tags != null && dto.Tags.Any())
-            {
-                foreach (var tag in ResolveTags(dto.Tags))
-                {
-                    existingApp.Tags.Add(tag);
-                }
-            }
-
-            _context.SaveChanges();
+            _logger.LogWarning(
+                "Update failed — application {Id} not found for user {UserId}",
+                id, userId);
+            return;
         }
+
+        existingApp.CompanyName = dto.CompanyName;
+        existingApp.Position = dto.Position;
+        existingApp.Status = dto.Status;
+        existingApp.AppliedDate = dto.AppliedDate;
+        existingApp.RawDescription = dto.RawDescription;
+        existingApp.SalaryMin = dto.SalaryMin;
+        existingApp.SalaryMax = dto.SalaryMax;
+        existingApp.Location = dto.Location;
+        existingApp.ExpirationDate = dto.ExpirationDate;
+        existingApp.Notes = dto.Notes;
+
+        existingApp.Tags.Clear();
+        if (dto.Tags != null && dto.Tags.Any())
+        {
+            foreach (var tag in ResolveTags(dto.Tags))
+                existingApp.Tags.Add(tag);
+        }
+
+        _context.SaveChanges();
+
+        _logger.LogInformation(
+            "Updated application {Id} ({Company}) — status: {Status}",
+            id, existingApp.CompanyName, existingApp.Status);
     }
     public JobApplication? FindDuplicate(string companyName, string userId)
     {
